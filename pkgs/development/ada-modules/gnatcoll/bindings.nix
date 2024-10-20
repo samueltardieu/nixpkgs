@@ -1,6 +1,7 @@
 { stdenv
 , lib
 , fetchFromGitHub
+, fetchpatch
 , gnat
 , gprbuild
 , gnatcoll-core
@@ -41,6 +42,24 @@ stdenv.mkDerivation rec {
     rev = "v${version}";
     sha256 = "00aakpmr67r72l1h3jpkaw83p1a2mjjvfk635yy5c1nss3ji1qjm";
   };
+
+  patches = [
+    (fetchpatch {
+      # Add minimal support for Python 3.11
+      url = "https://github.com/AdaCore/gnatcoll-bindings/commit/cd650de5.patch";
+      hash = "sha256-4zHTbUnwKdEMpT/KERsZOEN0/QbVqQHboPKKea9IPiA=";
+    })
+    (fetchpatch {
+      # Add a build node in gitlab CI (needed for the patch right after)
+      url = "https://github.com/AdaCore/gnatcoll-bindings/commit/ad58af47.patch";
+      hash = "sha256-ljqBT+B7SH5BUiM8pi4NxW9OP3CXug3ZwTP/OWgcb+s=";
+    })
+    (fetchpatch {
+      # distutils has been removed in Python 3.12
+      url = "https://github.com/AdaCore/gnatcoll-bindings/commit/2c128911.patch";
+      hash = "sha256-E7Q0RmQE0zd6anl5zbyrItQLUbWB4aEpn7VRKdBSE6I=";
+    })
+  ];
 
   nativeBuildInputs = [
     gprbuild
